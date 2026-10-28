@@ -1,0 +1,31 @@
+<%- include("partials/header", { clinic }) %>
+
+    <main class="booking-page">
+      <section class="booking-section">
+        <div class="container">
+          <section class="booking-confirmation" aria-labelledby="confirmation-title">
+            <% if (paid) { %>
+              <div class="confirmation-icon"><i class="bi bi-check-lg" aria-hidden="true"></i></div>
+              <span class="eyebrow">Payment received</span>
+              <h1 id="confirmation-title">Your appointment is booked</h1>
+              <p>Your AED 100 consultation deposit was paid successfully.</p>
+            <% } else { %>
+              <span class="eyebrow">Payment not completed</span>
+              <h1 id="confirmation-title">Your appointment is still pending</h1>
+              <p>We could not confirm payment for the AED 100 deposit. Your appointment has not been booked.</p>
+            <% } %>
+            <dl class="confirmation-summary">
+              <div><dt>Booking reference</dt><dd><%= booking.id %></dd></div>
+              <div><dt>Status</dt><dd><%= booking.status %></dd></div>
+              <div><dt>Specialty</dt><dd><%= booking.specialty %></dd></div>
+              <div><dt>Doctor</dt><dd><%= booking.doctor %></dd></div>
+              <div><dt>Date</dt><dd><%= booking.appointmentDateTime.slice(0, 10) %></dd></div>
+              <div><dt>Patient</dt><dd><%= booking.patientName %></dd></div>
+            </dl>
+            <a class="btn btn-primary" href="/">Return to home</a>
+          </section>
+        </div>
+      </section>
+    </main>
+
+<%- include("partials/footer", { clinic }) %>

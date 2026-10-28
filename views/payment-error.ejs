@@ -1,0 +1,20 @@
+<%- include("partials/header", { clinic }) %>
+
+    <main class="booking-page">
+      <section class="booking-section">
+        <div class="container">
+          <section class="booking-confirmation" aria-labelledby="payment-error-title">
+            <span class="eyebrow">Payment unavailable</span>
+            <h1 id="payment-error-title">Your appointment is pending</h1>
+            <p>We saved your appointment, but could not start or verify the deposit payment. No payment has been confirmed. Please try booking again later or contact the clinic.</p>
+            <dl class="confirmation-summary">
+              <div><dt>Booking reference</dt><dd><%= booking.id %></dd></div>
+              <div><dt>Status</dt><dd><%= booking.status %></dd></div>
+            </dl>
+            <a class="btn btn-primary" href="/booking">Return to booking</a>
+          </section>
+        </div>
+      </section>
+    </main>
+
+<%- include("partials/footer", { clinic }) %>

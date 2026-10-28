@@ -1,0 +1,57 @@
+<%- include("partials/header", { clinic }) %>
+
+    <main class="account-page">
+      <section class="account-section">
+        <div class="container">
+          <div class="appointments-heading">
+            <div>
+              <span class="eyebrow">Your care, all in one place</span>
+              <h1>My Appointments</h1>
+              <p>Signed in as <strong><%= currentUser.email %></strong></p>
+            </div>
+            <a class="btn btn-primary" href="/booking">Book an appointment</a>
+          </div>
+
+          <% if (cancelled) { %>
+            <div class="alert alert-success" role="status">Your appointment was cancelled.</div>
+          <% } %>
+
+          <% if (appointments.length) { %>
+            <div class="appointment-list">
+              <% appointments.forEach((appointment) => { %>
+                <article class="appointment-card">
+                  <div class="appointment-card-heading">
+                    <div>
+                      <span class="appointment-specialty"><%= appointment.specialty %></span>
+                      <h2><%= appointment.doctor %></h2>
+                    </div>
+                    <span class="appointment-status <%= appointment.status === "Cancelled" ? "is-cancelled" : "" %>"><%= appointment.status %></span>
+                  </div>
+                  <dl class="appointment-details">
+                    <div><dt>Date &amp; time</dt><dd><%= appointment.appointmentDateTime.replace("T", " ").replace("+04:00", " (Dubai)") %></dd></div>
+                    <div><dt>Patient</dt><dd><%= appointment.patientName %></dd></div>
+                    <div><dt>Phone</dt><dd><%= appointment.patientPhone %></dd></div>
+                    <div><dt>Booking reference</dt><dd>#<%= appointment.id %></dd></div>
+                  </dl>
+                  <% if (appointment.status !== "Cancelled") { %>
+                    <form action="/my-appointments/<%= appointment.id %>/cancel" method="post" class="cancel-form">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                      <button class="btn btn-outline-danger btn-sm" type="submit">Cancel appointment</button>
+                    </form>
+                  <% } %>
+                </article>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <section class="empty-appointments">
+              <div class="account-icon"><i class="bi bi-calendar2-heart" aria-hidden="true"></i></div>
+              <h2>No appointments yet</h2>
+              <p>When you book an appointment using your account email, it will appear here.</p>
+              <a class="btn btn-primary" href="/booking">Book an appointment</a>
+            </section>
+          <% } %>
+        </div>
+      </section>
+    </main>
+
+<%- include("partials/footer", { clinic }) %>

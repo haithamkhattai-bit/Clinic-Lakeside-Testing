@@ -1,0 +1,45 @@
+<%- include("partials/header", { clinic }) %>
+
+    <main class="account-page">
+      <section class="account-section">
+        <div class="container">
+          <a class="booking-back-link" href="/"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to home</a>
+          <div class="account-card">
+            <div class="account-icon"><i class="bi bi-person-heart" aria-hidden="true"></i></div>
+            <span class="eyebrow"><%= mode === "register" ? "Create your account" : "Welcome back" %></span>
+            <h1><%= mode === "register" ? "Patient registration" : "Patient login" %></h1>
+            <p class="account-intro"><%= mode === "register" ? "Sign up to keep your appointments together in one place." : "Log in to view and manage your appointments." %></p>
+
+            <% if (errors.length) { %>
+              <div class="alert alert-danger" role="alert">
+                <ul class="mb-0"><% errors.forEach((error) => { %><li><%= error %></li><% }) %></ul>
+              </div>
+            <% } %>
+
+            <form action="/<%= mode %>" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <div class="mb-3">
+                <label class="booking-label" for="email">Email address</label>
+                <input class="form-control booking-input" type="email" id="email" name="email" autocomplete="email" maxlength="254" value="<%= email %>" required />
+              </div>
+              <div class="mb-4">
+                <label class="booking-label" for="password">Password</label>
+                <input class="form-control booking-input" type="password" id="password" name="password" autocomplete="<%= mode === "register" ? "new-password" : "current-password" %>" <%= mode === "register" ? 'minlength="12" maxlength="72"' : 'maxlength="72"' %> required />
+                <% if (mode === "register") { %><div class="form-text">Use at least 12 characters (maximum 72 bytes).</div><% } %>
+              </div>
+              <button class="btn btn-primary w-100" type="submit"><%= mode === "register" ? "Create account" : "Log in" %></button>
+            </form>
+
+            <p class="account-switch mb-0">
+              <% if (mode === "register") { %>
+                Already have an account? <a href="/login">Log in</a>
+              <% } else { %>
+                New to the clinic? <a href="/register">Create an account</a>
+              <% } %>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+<%- include("partials/footer", { clinic }) %>

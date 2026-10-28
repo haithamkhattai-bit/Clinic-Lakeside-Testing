@@ -1,0 +1,63 @@
+<%- include("partials/header", { clinic }) %>
+
+    <main class="account-page">
+      <section class="account-section">
+        <div class="container">
+          <div class="appointments-heading">
+            <div>
+              <span class="eyebrow">Clinic staff</span>
+              <h1>Reception</h1>
+              <p>Signed in as <strong><%= currentUser.email %></strong></p>
+            </div>
+            <a class="btn btn-primary" href="/booking">Book an appointment</a>
+          </div>
+
+          <% if (reminderSent) { %>
+            <div class="alert alert-success" role="status">Appointment reminder sent successfully.</div>
+          <% } %>
+          <% if (reminderFailed) { %>
+            <div class="alert alert-danger" role="alert">The reminder could not be sent. Check the SMTP configuration and try again.</div>
+          <% } %>
+
+          <% if (appointments.length) { %>
+            <div class="table-responsive">
+              <table class="table table-striped align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col">Patient</th>
+                    <th scope="col">Date &amp; time</th>
+                    <th scope="col">Specialty</th>
+                    <th scope="col">Doctor</th>
+                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% appointments.forEach((appointment) => { %>
+                    <tr>
+                      <td><%= appointment.patientName %></td>
+                      <td><%= appointment.appointmentDateTime.replace("T", " ").replace("+04:00", " (Dubai)") %></td>
+                      <td><%= appointment.specialty %></td>
+                      <td><%= appointment.doctor %></td>
+                      <td>
+                        <form action="/reception/<%= appointment.id %>/reminder" method="post">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                          <button class="btn btn-outline-primary btn-sm" type="submit">Send reminder</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <section class="empty-appointments">
+              <div class="account-icon"><i class="bi bi-calendar2-heart" aria-hidden="true"></i></div>
+              <h2>No booked appointments</h2>
+              <p>Appointments will appear here after the deposit has been paid.</p>
+            </section>
+          <% } %>
+        </div>
+      </section>
+    </main>
+
+<%- include("partials/footer", { clinic }) %>
