@@ -4,6 +4,11 @@ const insertUser = db.prepare(`
   INSERT OR IGNORE INTO users (email, passwordHash)
   VALUES (?, ?)
 `);
+const insertStaffUser = db.prepare(`
+  INSERT INTO users (email, passwordHash, role)
+  VALUES (?, ?, 'reception')
+  ON CONFLICT(email) DO UPDATE SET role = 'reception'
+`);
 const selectUserByEmail = db.prepare("SELECT * FROM users WHERE email = ? COLLATE NOCASE");
 const insertBooking = db.prepare(`
   INSERT INTO appointments (
@@ -83,6 +88,11 @@ function getUserByEmail(email) {
   return selectUserByEmail.get(email) || null;
 }
 
+function seedStaffUser(email, passwordHash) {
+  insertStaffUser.run(email, passwordHash);
+  return selectUserByEmail.get(email) || null;
+}
+
 function createBooking(booking) {
   const result = insertBooking.run(
     booking.specialty,
@@ -136,7 +146,11 @@ function getBookingsByDate(date) {
 }
 
 function updateStatus(id, status) {
-  return updateStatusStatement.get(status, id) || null;
+  const appointmentId = Number(id);
+  if (!Number.isSafeInteger(appointmentId) || appointmentId < 1) return null;
+  if (!["Booked", "Arrived", "Done", "No-show"].includes(status)) return null;
+
+  return updateStatusStatement.get(status, appointmentId) || null;
 }
 
 function cancelAppointment(id, patientEmail) {
@@ -149,6 +163,7 @@ function cancelAppointment(id, patientEmail) {
 module.exports = {
   createUser,
   getUserByEmail,
+  seedStaffUser,
   createBooking,
   getBookingById,
   getBookingByStripeSessionId,

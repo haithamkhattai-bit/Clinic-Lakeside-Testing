@@ -10,10 +10,37 @@
         </div>
       </div>
     </footer>
+
+    <section class="assistant" data-assistant aria-label="Lakeside clinic assistant">
+      <div class="assistant-panel" id="assistant-panel" data-assistant-panel hidden>
+        <div class="assistant-heading">
+          <div>
+            <strong>Ask Lakeside</strong>
+            <span>Clinic information</span>
+          </div>
+        </div>
+        <div class="assistant-messages" data-assistant-messages role="log" aria-live="polite" aria-relevant="additions">
+          <div class="assistant-message assistant-message-assistant">
+            Hi! I can help with clinic specialties, doctors, hours, location, insurance, and deposits.
+          </div>
+        </div>
+        <form class="assistant-form" data-assistant-form>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <label class="visually-hidden" for="assistant-question">Message Ask Lakeside</label>
+          <input id="assistant-question" data-assistant-input type="text" maxlength="2000" placeholder="Ask a question…" autocomplete="off" required />
+          <button data-assistant-submit type="submit" aria-label="Send message"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+        </form>
+      </div>
+      <button class="assistant-toggle" data-assistant-toggle type="button" aria-controls="assistant-panel" aria-expanded="false">
+        <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+        <span>Ask Lakeside</span>
+      </button>
+    </section>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
-  </body>
-</html>
+    <script src="/js/assistant.js" defer></script>
+  </body></html>

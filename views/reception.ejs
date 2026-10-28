@@ -1,17 +1,25 @@
 <%- include("partials/header", { clinic }) %>
 
-    <main class="account-page">
-      <section class="account-section">
+    <main class="reception-page">
+      <section class="reception-section">
         <div class="container">
-          <div class="appointments-heading">
+          <header class="reception-header">
             <div>
-              <span class="eyebrow">Clinic staff</span>
-              <h1>Reception</h1>
+              <span class="eyebrow">Lakeside Medical Reception · London International · lisrc.ae</span>
+              <h1>Reception dashboard</h1>
               <p>Signed in as <strong><%= currentUser.email %></strong></p>
             </div>
-            <a class="btn btn-primary" href="/booking">Book an appointment</a>
+            <div class="reception-author">by Aisha Khan</div>
+          </header>
+
+          <div class="reception-count">
+            <span>Today’s appointments</span>
+            <strong><%= appointmentCount %></strong>
           </div>
 
+          <% if (statusUpdated) { %>
+            <div class="alert alert-success" role="status">Appointment status updated.</div>
+          <% } %>
           <% if (reminderSent) { %>
             <div class="alert alert-success" role="status">Appointment reminder sent successfully.</div>
           <% } %>
@@ -19,41 +27,64 @@
             <div class="alert alert-danger" role="alert">The reminder could not be sent. Check the SMTP configuration and try again.</div>
           <% } %>
 
-          <% if (appointments.length) { %>
-            <div class="table-responsive">
-              <table class="table table-striped align-middle">
-                <thead>
-                  <tr>
-                    <th scope="col">Patient</th>
-                    <th scope="col">Date &amp; time</th>
-                    <th scope="col">Specialty</th>
-                    <th scope="col">Doctor</th>
-                    <th scope="col"><span class="visually-hidden">Actions</span></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% appointments.forEach((appointment) => { %>
-                    <tr>
-                      <td><%= appointment.patientName %></td>
-                      <td><%= appointment.appointmentDateTime.replace("T", " ").replace("+04:00", " (Dubai)") %></td>
-                      <td><%= appointment.specialty %></td>
-                      <td><%= appointment.doctor %></td>
-                      <td>
-                        <form action="/reception/<%= appointment.id %>/reminder" method="post">
-                          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                          <button class="btn btn-outline-primary btn-sm" type="submit">Send reminder</button>
-                        </form>
-                      </td>
-                    </tr>
-                  <% }) %>
-                </tbody>
-              </table>
-            </div>
-          <% } else { %>
+          <% if (groupedAppointments.length) { %>
+            <% groupedAppointments.forEach(([doctor, appointments]) => { %>
+              <section class="doctor-schedule" aria-labelledby="doctor-<%= doctor.replace(/[^a-z0-9]+/gi, '-').toLowerCase() %>">
+                <h2 id="doctor-<%= doctor.replace(/[^a-z0-9]+/gi, '-').toLowerCase() %>"><%= doctor %></h2>
+                <div class="table-responsive">
+                  <table class="table reception-table align-middle">
+                    <thead>
+                      <tr>
+                        <th scope="col">Patient</th>
+                        <th scope="col">Time</th>
+                        <th scope="col">Specialty</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% appointments.forEach((appointment) => { %>
+                        <tr>
+                          <td><strong><%= appointment.patientName %></strong></td>
+                          <td><%= formatTime(appointment.appointmentDateTime) %></td>
+                          <td><%= appointment.specialty %></td>
+                          <td><span class="reception-status status-<%= appointment.status.toLowerCase().replace(/[^a-z]/g, '') %>"><%= appointment.status %></span></td>
+                          <td>
+                            <div class="reception-actions">
+                              <form action="/reception/<%= appointment.id %>/status" method="post">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                                <input type="hidden" name="status" value="Arrived" />
+                                <button class="btn btn-sm btn-outline-success" type="submit" <% if (appointment.status === "Arrived") { %>disabled<% } %>>Arrived</button>
+                              </form>
+                              <form action="/reception/<%= appointment.id %>/status" method="post">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                                <input type="hidden" name="status" value="Done" />
+                                <button class="btn btn-sm btn-outline-primary" type="submit" <% if (appointment.status === "Done") { %>disabled<% } %>>Done</button>
+                              </form>
+                              <form action="/reception/<%= appointment.id %>/status" method="post">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                                <input type="hidden" name="status" value="No-show" />
+                                <button class="btn btn-sm btn-outline-danger" type="submit" <% if (appointment.status === "No-show") { %>disabled<% } %>>No-show</button>
+                              </form>
+                              <form action="/reception/<%= appointment.id %>/reminder" method="post">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                                <button class="btn btn-sm btn-outline-secondary" type="submit">Send reminder</button>
+                              </form>
+                            </div>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            <% }) %>
+          <% } %>
+          <% if (!groupedAppointments.length) { %>
             <section class="empty-appointments">
               <div class="account-icon"><i class="bi bi-calendar2-heart" aria-hidden="true"></i></div>
-              <h2>No booked appointments</h2>
-              <p>Appointments will appear here after the deposit has been paid.</p>
+              <h2>No appointments today</h2>
+              <p>Paid appointments scheduled for today in Dubai time will appear here.</p>
             </section>
           <% } %>
         </div>

@@ -14,7 +14,7 @@ function renderAuth(res, mode, options = {}) {
 }
 
 router.get("/register", (req, res) => {
-  if (req.session.user) return res.redirect("/my-appointments");
+  if (req.session.user) return res.redirect(req.session.user.role === "reception" ? "/reception" : "/my-appointments");
   return renderAuth(res, "register");
 });
 
@@ -49,12 +49,12 @@ router.post("/register", async (req, res) => {
   await new Promise((resolve, reject) => {
     req.session.regenerate((error) => (error ? reject(error) : resolve()));
   });
-  req.session.user = { id: user.id, email: user.email };
-  return res.redirect(303, "/my-appointments");
+  req.session.user = { id: user.id, email: user.email, role: user.role };
+  return res.redirect(303, user.role === "reception" ? "/reception" : "/my-appointments");
 });
 
 router.get("/login", (req, res) => {
-  if (req.session.user) return res.redirect("/my-appointments");
+  if (req.session.user) return res.redirect(req.session.user.role === "reception" ? "/reception" : "/my-appointments");
   return renderAuth(res, "login");
 });
 
@@ -85,12 +85,12 @@ router.post("/login", async (req, res) => {
   await new Promise((resolve, reject) => {
     req.session.regenerate((error) => (error ? reject(error) : resolve()));
   });
-  req.session.user = { id: user.id, email: user.email };
+  req.session.user = { id: user.id, email: user.email, role: user.role };
   await new Promise((resolve, reject) => {
     req.session.save((error) => (error ? reject(error) : resolve()));
   });
 
-  return res.redirect(303, "/my-appointments");
+  return res.redirect(303, user.role === "reception" ? "/reception" : "/my-appointments");
 });
 
 router.post("/logout", (req, res, next) => {

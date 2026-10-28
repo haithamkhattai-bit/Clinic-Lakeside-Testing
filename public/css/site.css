@@ -1219,3 +1219,234 @@ a {
     flex: 1;
   }
 }
+
+.assistant {
+  bottom: 1.25rem;
+  position: fixed;
+  right: 1.25rem;
+  width: min(350px, calc(100vw - 2rem));
+  z-index: 1030;
+}
+
+.assistant-toggle {
+  align-items: center;
+  background: var(--blue);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 10px 28px rgba(17, 74, 110, 0.25);
+  color: #fff;
+  display: flex;
+  font-weight: 700;
+  gap: 0.5rem;
+  margin-left: auto;
+  padding: 0.78rem 1.05rem;
+}
+
+.assistant-toggle:hover,
+.assistant-toggle:focus-visible {
+  background: var(--blue-dark);
+}
+
+.assistant-panel {
+  background: #fff;
+  border: 1px solid #dce8ee;
+  border-radius: 16px;
+  box-shadow: 0 18px 55px rgba(18, 59, 93, 0.18);
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+
+.assistant-panel[hidden] {
+  display: none;
+}
+
+.assistant-heading {
+  background: var(--navy);
+  color: #fff;
+  padding: 0.85rem 1rem;
+}
+
+.assistant-heading strong,
+.assistant-heading span {
+  display: block;
+}
+
+.assistant-heading span {
+  color: #c9dae6;
+  font-size: 0.76rem;
+  margin-top: 0.12rem;
+}
+
+.assistant-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  height: 280px;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.assistant-message {
+  border-radius: 12px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  max-width: 88%;
+  padding: 0.7rem 0.8rem;
+  white-space: pre-line;
+}
+
+.assistant-message-assistant {
+  background: #edf6fb;
+  color: var(--navy);
+}
+
+.assistant-message-user {
+  align-self: flex-end;
+  background: var(--blue);
+  color: #fff;
+}
+
+.assistant-form {
+  border-top: 1px solid #e5eef3;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.assistant-form input {
+  border: 1px solid #d6e2e9;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 0.75rem;
+}
+
+.assistant-form input:focus {
+  border-color: #61a9d2;
+  outline: 3px solid rgba(22, 120, 184, 0.13);
+}
+
+.assistant-form button {
+  align-items: center;
+  background: var(--blue);
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  display: inline-flex;
+  justify-content: center;
+  width: 42px;
+}
+
+.assistant-form button:disabled,
+.assistant-form input:disabled {
+  opacity: 0.65;
+}
+
+@media (max-width: 575.98px) {
+  .assistant {
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .assistant-messages {
+    height: 240px;
+  }
+}
+
+.reception-page {
+  background: #edf4f7;
+  min-height: calc(100vh - 74px);
+}
+
+.reception-section {
+  padding: 2.5rem 0 4.5rem;
+}
+
+.reception-header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.reception-header h1 {
+  color: var(--navy);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  margin: 0.25rem 0 0.35rem;
+}
+
+.reception-header p,
+.reception-author {
+  color: var(--muted);
+  margin: 0;
+}
+
+.reception-author {
+  border: 1px solid #d9e5eb;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  padding: 0.45rem 0.75rem;
+}
+
+.reception-count {
+  align-items: center;
+  background: var(--navy);
+  border-radius: 14px;
+  color: #fff;
+  display: inline-flex;
+  gap: 1.25rem;
+  margin: 1.4rem 0 1.2rem;
+  padding: 0.8rem 1.1rem;
+}
+
+.reception-count span { font-size: 0.86rem; }
+.reception-count strong { font-size: 1.55rem; }
+
+.doctor-schedule {
+  background: #fff;
+  border: 1px solid #dde8ed;
+  border-radius: 14px;
+  box-shadow: 0 12px 35px rgba(18, 59, 93, 0.06);
+  margin-top: 1.25rem;
+  overflow: hidden;
+}
+
+.doctor-schedule h2 {
+  border-bottom: 1px solid #e6eef2;
+  color: var(--navy);
+  font-size: 1.15rem;
+  margin: 0;
+  padding: 1rem 1.15rem;
+}
+
+.reception-table { margin: 0; }
+
+.reception-table th {
+  background: #f6f9fb;
+  color: var(--muted);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+}
+
+.reception-table td,
+.reception-table th { padding: 0.9rem 1.15rem; }
+
+.reception-status {
+  border-radius: 999px;
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.32rem 0.55rem;
+}
+
+.status-booked { background: #edf4f7; color: #385666; }
+.status-arrived { background: #dff2e7; color: #1d7250; }
+.status-done { background: #dceaf8; color: #245c91; }
+.status-noshow { background: #f7dfdf; color: #9c3d3d; }
+
+.reception-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.reception-actions form { margin: 0; }
+
+@media (max-width: 575.98px) {
+  .reception-header { gap: 1rem; }
+  .reception-author { flex: 0 0 auto; }
+}

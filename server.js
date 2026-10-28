@@ -7,6 +7,7 @@ if (fs.existsSync(envFile)) {
 }
 
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const csrfProtection = require("./middleware/csrfProtection");
 const bookingRouter = require("./routes/booking");
@@ -14,6 +15,8 @@ const authRouter = require("./routes/auth");
 const appointmentsRouter = require("./routes/appointments");
 const paymentRouter = require("./routes/payment");
 const receptionRouter = require("./routes/reception");
+const appointmentService = require("./services/appointmentService");
+const assistantService = require("./services/assistantService");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,6 +29,7 @@ app.set("views", path.join(__dirname, "views"));
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }
+app.use(express.json({ limit: "20kb" }));
 app.use(express.urlencoded({ extended: false, limit: "10kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
@@ -85,12 +89,41 @@ app.get("/", (req, res) => {
   res.render("index", { specialties });
 });
 
+app.post("/api/chat", async (req, res) => {
+  try {
+    const reply = await assistantService.chat(req.body.messages);
+    return res.json({ reply });
+  } catch (error) {
+    const status = /not configured/.test(error.message) ? 503 : 400;
+    console.error("Could not complete assistant chat:", error.message);
+    return res.status(status).json({
+      error: status === 503
+        ? "The assistant is temporarily unavailable. Please call the clinic."
+        : error.message,
+    });
+  }
+});
+
 app.use("/booking", bookingRouter);
 app.use("/", authRouter);
 app.use("/my-appointments", appointmentsRouter);
 app.use("/reception", receptionRouter);
 app.use("/", paymentRouter);
 
-app.listen(port, () => {
-  console.log(`Lakeside Medical Clinic website is running at http://localhost:${port}`);
+async function start() {
+  if (!process.env.RECEPTION_PASSWORD) {
+    console.warn("RECEPTION_PASSWORD is not configured; reception staff login is unavailable.");
+  } else {
+    const passwordHash = await bcrypt.hash(process.env.RECEPTION_PASSWORD, 12);
+    appointmentService.seedStaffUser("reception@lakeside.local", passwordHash);
+  }
+
+  app.listen(port, () => {
+    console.log(`Lakeside Medical Clinic website is running at http://localhost:${port}`);
+  });
+}
+
+start().catch((error) => {
+  console.error("Could not start Lakeside Medical Clinic:", error);
+  process.exitCode = 1;
 });

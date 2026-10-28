@@ -32,6 +32,11 @@ db.exec(`
   );
 `);
 
+const userColumns = db.prepare("PRAGMA table_info(users)").all();
+if (!userColumns.some((column) => column.name === "role")) {
+  db.exec("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'patient'");
+}
+
 const appointmentColumns = db.prepare("PRAGMA table_info(appointments)").all();
 if (!appointmentColumns.some((column) => column.name === "stripeSessionId")) {
   db.exec("ALTER TABLE appointments ADD COLUMN stripeSessionId TEXT");
